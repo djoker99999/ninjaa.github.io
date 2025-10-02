@@ -124,6 +124,14 @@
       z-index: 5;
     }
 
+    .turtle.noob {
+      filter: drop-shadow(0 0 15px rgba(135, 206, 235, 0.7)) brightness(1.1);
+    }
+
+    .turtle.buchette {
+      filter: drop-shadow(0 0 15px rgba(221, 160, 221, 0.7)) brightness(1.1);
+    }
+
     .turtle.easy {
       filter: drop-shadow(0 0 15px rgba(139, 195, 74, 0.7)) brightness(1.1);
     }
@@ -604,31 +612,62 @@
     }
 
     .difficulty-btn {
-      padding: 8px 15px;
+      width: 80px;
+      height: 80px;
       border-radius: 15px;
-      font-weight: bold;
       cursor: pointer;
       transition: all 0.3s ease;
-      border: 2px solid transparent;
-      font-size: 14px;
+      border: 3px solid rgba(76, 175, 80, 0.3);
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .difficulty-btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.2);
+      transition: all 0.3s ease;
+    }
+
+    .difficulty-btn:hover::before {
+      background: rgba(0, 0, 0, 0.1);
+    }
+
+    .difficulty-btn.noob {
+      background-image: url('https://i.ibb.co/gFMBxFzP/IMG-6063.png');
+    }
+
+    .difficulty-btn.buchette {
+      background-image: url('https://i.ibb.co/JMPfpWV/IMG-5851.png');
     }
 
     .difficulty-btn.easy {
-      background: linear-gradient(45deg, #4CAF50, #8BC34A);
+      background-image: url('https://i.ibb.co/p6s7HT5n/IMG-7322.png');
     }
 
     .difficulty-btn.medium {
-      background: linear-gradient(45deg, #FF9800, #FFC107);
+      background-image: url('https://i.ibb.co/hxXnkQh7/IMG-5861.png');
     }
 
     .difficulty-btn.hard {
-      background: linear-gradient(45deg, #F44336, #E91E63);
+      background-image: url('https://i.ibb.co/DHBNtX7t/IMG-6573.png');
     }
 
     .difficulty-btn.active {
-      border-color: white;
-      box-shadow: 0 0 10px rgba(255,255,255,0.5);
-      transform: scale(1.05);
+      border-color: #8BC34A;
+      box-shadow: 0 0 20px rgba(139, 195, 74, 0.8);
+      transform: scale(1.1);
+    }
+
+    .difficulty-btn.active::before {
+      background: rgba(139, 195, 74, 0.2);
     }
 
     @media (max-width: 480px) {
@@ -644,6 +683,15 @@
       .turtle {
         width: 160px;
         height: 140px;
+      }
+
+      .difficulty-selector {
+        gap: 8px;
+      }
+
+      .difficulty-btn {
+        width: 60px;
+        height: 60px;
       }
       
       .instructions {
@@ -726,6 +774,15 @@
       margin: 10px 0;
     }
 
+    .difficulty-badge.noob {
+      background: linear-gradient(45deg, #87CEEB, #B0E0E6);
+      color: #000;
+    }
+
+    .difficulty-badge.buchette {
+      background: linear-gradient(45deg, #DDA0DD, #DA70D6);
+    }
+
     .difficulty-badge.easy {
       background: linear-gradient(45deg, #4CAF50, #8BC34A);
     }
@@ -746,13 +803,15 @@
     <h1>🐢 Les Tortues Ninja ! 🥷</h1>
     
     <div class="difficulty-selector">
-      <div class="difficulty-btn easy active" data-difficulty="easy">Facile</div>
-      <div class="difficulty-btn medium" data-difficulty="medium">Moyen</div>
-      <div class="difficulty-btn hard" data-difficulty="hard">Difficile</div>
+      <div class="difficulty-btn noob active" data-difficulty="noob" title="Noob - 1500 HP"></div>
+      <div class="difficulty-btn buchette" data-difficulty="buchette" title="Buchette - 5000 HP"></div>
+      <div class="difficulty-btn easy" data-difficulty="easy" title="Facile - 15000 HP"></div>
+      <div class="difficulty-btn medium" data-difficulty="medium" title="Moyen - 25000 HP"></div>
+      <div class="difficulty-btn hard" data-difficulty="hard" title="Difficile - 50000 HP"></div>
     </div>
     
     <div class="turtle-container">
-      <div class="turtle easy" id="turtle"></div>
+      <div class="turtle noob" id="turtle"></div>
       <div class="particles-container" id="particlesContainer"></div>
     </div>
 
@@ -799,7 +858,7 @@
     let lastHitTime = 0;
     let isAttacking = false;
     let audioContext = null;
-    let currentDifficulty = "easy";
+    let currentDifficulty = "noob";
 
     const turtle = document.getElementById("turtle");
     const message = document.getElementById("message");
@@ -1058,6 +1117,15 @@
     }
 
     function updateUI() {
+      let difficultyName = "";
+      switch(currentDifficulty) {
+        case "noob": difficultyName = "Noob"; break;
+        case "buchette": difficultyName = "Buchette"; break;
+        case "easy": difficultyName = "Débutante"; break;
+        case "medium": difficultyName = "Intermédiaire"; break;
+        case "hard": difficultyName = "Experte"; break;
+      }
+
       if (currentHP === 0) {
         turtle.className = "turtle broken " + currentDifficulty;
         message.textContent = "💥 La Tortue Ninja est devenue un maître !";
@@ -1067,7 +1135,7 @@
           message.textContent = "⚠️ La Tortue Ninja progresse rapidement...";
         } else {
           turtle.classList.remove("cracked");
-          message.textContent = `Tortue Ninja ${currentDifficulty === "easy" ? "Débutante" : currentDifficulty === "medium" ? "Intermédiaire" : "Experte"} - À tout moment elle peut devenir un maître...`;
+          message.textContent = `Tortue Ninja ${difficultyName} - À tout moment elle peut devenir un maître...`;
         }
       }
     }
@@ -1078,20 +1146,30 @@
       let rewardImg = "";
       
       switch(currentDifficulty) {
+        case "noob":
+          rewardText = "Splinter - Le Sensei !";
+          victoryText = "Premier pas accompli ! Tu as découvert la voie du ninja !";
+          rewardImg = "https://i.ibb.co/gFMBxFzP/IMG-6063.png";
+          break;
+        case "buchette":
+          rewardText = "Donatello - Le Génie !";
+          victoryText = "Impressionnant ! La technologie ninja est à toi !";
+          rewardImg = "https://i.ibb.co/JMPfpWV/IMG-5851.png";
+          break;
         case "easy":
           rewardText = "Leonardo - Le Chef !";
           victoryText = "Cowabunga ! Tu as maîtrisé l'art du leadership !";
-          rewardImg = "https://i.pinimg.com/736x/52/cf/ac/52cfac4e0ad6b65e8bb73d0c20a87b66.jpg";
+          rewardImg = "https://i.ibb.co/p6s7HT5n/IMG-7322.png";
           break;
         case "medium":
           rewardText = "Michelangelo - Le Rigolo !";
           victoryText = "Génial ! Tu es devenu un vrai maître de la pizza party !";
-          rewardImg = "https://i.pinimg.com/736x/f8/0c/8d/f80c8d30fe44ccf1be40ffb2fb66a15c.jpg";
+          rewardImg = "https://i.ibb.co/hxXnkQh7/IMG-5861.png";
           break;
         case "hard":
           rewardText = "Raphael - Le Guerrier !";
           victoryText = "Incroyable ! Tu as la force d'un vrai ninja !";
-          rewardImg = "https://i.pinimg.com/736x/df/a5/2c/dfa52c7f3c23a8f36fc5f48f9c906d20.jpg";
+          rewardImg = "https://i.ibb.co/DHBNtX7t/IMG-6573.png";
           break;
       }
       
@@ -1158,14 +1236,20 @@
 
     function initGame() {
       switch(currentDifficulty) {
+        case "noob":
+          maxHP = 1500;
+          break;
+        case "buchette":
+          maxHP = 5000;
+          break;
         case "easy":
-          maxHP = 50000;
+          maxHP = 15000;
           break;
         case "medium":
-          maxHP = 100000;
+          maxHP = 25000;
           break;
         case "hard":
-          maxHP = 200000;
+          maxHP = 50000;
           break;
       }
       
@@ -1179,7 +1263,16 @@
       isAttacking = false;
       
       turtle.className = "turtle " + currentDifficulty;
-      message.textContent = `Tortue Ninja ${currentDifficulty === "easy" ? "Débutante" : currentDifficulty === "medium" ? "Intermédiaire" : "Experte"} - À tout moment elle peut devenir un maître...`;
+      
+      let difficultyName = "";
+      switch(currentDifficulty) {
+        case "noob": difficultyName = "Noob"; break;
+        case "buchette": difficultyName = "Buchette"; break;
+        case "easy": difficultyName = "Débutante"; break;
+        case "medium": difficultyName = "Intermédiaire"; break;
+        case "hard": difficultyName = "Experte"; break;
+      }
+      message.textContent = `Tortue Ninja ${difficultyName} - À tout moment elle peut devenir un maître...`;
       
       closeVictoryPopup();
       comboIndicator.style.display = "none";
@@ -1247,6 +1340,14 @@
         case 'r':
         case 'R':
           initGame();
+          break;
+        case 'n':
+        case 'N':
+          setDifficulty('noob');
+          break;
+        case 'b':
+        case 'B':
+          setDifficulty('buchette');
           break;
         case 'e':
         case 'E':
